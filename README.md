@@ -1,22 +1,32 @@
 # 🚀 AI-Powered Document & Multimedia Q&A Platform
 
-An intelligent full-stack application that allows users to upload **PDFs, audio, and video files**, generate **AI-powered summaries**, extract **keywords & timestamps**, and interact with uploaded content using a conversational AI interface.
+An intelligent full-stack web application that enables users to upload **PDFs, audio, and video files**, generate **AI-powered summaries**, extract **keywords & timestamps**, and interact with uploaded content through an AI chatbot.
+
+---
+
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![React](https://img.shields.io/badge/React-Frontend-blue)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![Coverage](https://img.shields.io/badge/Coverage-96.15%25-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
 # ✨ Features
 
-✅ Upload and process multiple file formats  
+✅ Upload PDF, MP3, MP4, WAV, and MPEG files  
 ✅ AI-generated summaries using Groq AI  
 ✅ Audio & video transcription support  
-✅ Keyword extraction from documents  
-✅ Timestamp/topic generation for media files  
-✅ Chat with uploaded documents  
-✅ User authentication with Clerk  
-✅ Responsive React frontend  
-✅ FastAPI backend APIs  
+✅ Keyword extraction from uploaded documents  
+✅ Timestamp/topic extraction for media files  
+✅ AI chatbot for uploaded content  
+✅ Clerk authentication integration  
 ✅ MongoDB database integration  
-✅ Dockerized deployment support  
+✅ Dockerized full-stack setup  
+✅ Automated backend testing with 96.15% coverage  
+✅ GitHub Actions CI/CD pipeline  
 
 ---
 
@@ -43,13 +53,14 @@ An intelligent full-stack application that allows users to upload **PDFs, audio,
 ## 🐳 DevOps
 - Docker
 - Docker Compose
+- GitHub Actions
 
 ---
 
 # 📁 Project Structure
 
 ```bash
-panServiceInnovation/
+Pan_Service_Innovation_Assessment/
 │
 ├── backend/
 │   ├── app/
@@ -59,16 +70,24 @@ panServiceInnovation/
 │   │   ├── routes/
 │   │   └── main.py
 │   │
+│   ├── tests/
 │   ├── requirements.txt
+│   ├── pytest.ini
 │   └── Dockerfile
 │
 ├── frontend/
 │   ├── src/
+│   ├── public/
 │   ├── package.json
 │   └── Dockerfile
 │
+├── .github/
+│   └── workflows/
+│       └── test.yml
+│
 ├── docker-compose.yml
-└── .env
+├── .env.example
+└── README.md
 ```
 
 ---
@@ -97,18 +116,21 @@ VITE_API_URL=http://localhost:8000
 # Clerk Authentication
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 
-
+# =========================
+# Backend CORS
+# =========================
+BACKEND_CORS_ORIGINS=["http://localhost:5173"]
 ```
 
 ---
 
 # ⚡ Installation & Setup
 
-## 1️⃣ Clone Repository
+# 1️⃣ Clone Repository
 
 ```bash
-git clone <repository-url>
-cd panServiceInnovation
+git clone https://github.com/frostAdarsh/Pan_Service_Innovation_Assessment.git
+cd Pan_Service_Innovation_Assessment
 ```
 
 ---
@@ -412,9 +434,21 @@ http://localhost:8000/redoc
 
 ---
 
-# 🧪 Testing
+# 🧪 Automated Testing & Coverage
 
-## ✅ Run Backend Tests
+This project includes automated backend testing using `pytest` and `pytest-cov`.
+
+---
+
+# 📦 Install Testing Dependencies
+
+```bash
+pip install pytest pytest-cov
+```
+
+---
+
+# ▶ Run All Tests
 
 ```bash
 pytest
@@ -422,21 +456,161 @@ pytest
 
 ---
 
-## ✅ Run Tests with Coverage
+# 📊 Generate Coverage Report
 
 ```bash
-pytest --cov=app
+pytest --cov=app --cov-report=term-missing
 ```
 
 ---
 
-# 🧹 Linting
-
-## Frontend Linting
+# 🌐 Generate HTML Coverage Report
 
 ```bash
-npm run lint
+pytest --cov=app --cov-report=html
 ```
+
+Coverage report will be generated inside:
+
+```bash
+htmlcov/index.html
+```
+
+---
+
+# ✅ Actual Coverage Output
+
+```bash
+platform linux -- Python 3.10.20, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/runner/work/Pan_Service_Innovation_Assessment/Pan_Service_Innovation_Assessment/backend
+configfile: pytest.ini
+
+collected 17 items
+
+tests/test_controllers.py ....                                           [ 23%]
+tests/test_main.py ..                                                    [ 35%]
+tests/test_routes.py ...........                                         [100%]
+
+================================ tests coverage ================================
+
+Name                               Stmts   Miss  Cover
+----------------------------------------------------------------
+app/controllers/ai_controller.py      22      1    95%
+app/core/database.py                  24      1    96%
+app/main.py                           20      3    85%
+app/models/document.py                13      0   100%
+app/routes/upload.py                  77      1    99%
+
+----------------------------------------------------------------
+TOTAL                                156      6    96%
+
+Required test coverage of 95% reached.
+Total coverage: 96.15%
+```
+
+---
+
+# 🎯 Coverage Summary
+
+| Module | Coverage |
+|--------|----------|
+| AI Controller | 95% |
+| Database Layer | 96% |
+| Main Application | 85% |
+| Models | 100% |
+| Upload Routes | 99% |
+
+---
+
+# ✅ Total Coverage: **96.15%**
+
+---
+
+# 🧪 Tested Features
+
+- File upload APIs
+- PDF parsing
+- Audio/video transcription
+- AI chatbot endpoints
+- MongoDB operations
+- Authentication flows
+- Error handling scenarios
+- Invalid request validation
+- Timestamp extraction logic
+- Summary generation
+- Edge case testing
+
+---
+
+# 📸 Test Coverage Proof
+
+![Coverage Screenshot](./screenshots/coverage.png)
+
+---
+
+# ⚙ GitHub Actions CI/CD Pipeline
+
+This project uses GitHub Actions for automated testing.
+
+Location:
+
+```bash
+.github/workflows/test.yml
+```
+
+---
+
+# 🚀 GitHub Actions Workflow
+
+```yaml
+name: Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run Tests with Coverage
+        run: |
+          cd backend
+          pytest --cov=app --cov-report=term-missing
+```
+
+---
+
+# 🌐 Live Demo
+
+Frontend: https://your-frontend-url.com
+
+Backend Docs: https://your-backend-url.com/docs
+
+---
+
+# 🎥 Walkthrough Video
+
+YouTube / Google Drive Link:
+
+https://your-video-link.com
 
 ---
 
@@ -455,7 +629,7 @@ The backend handles:
 
 # 🔒 Security Best Practices
 
-✅ Store secrets in `.env` files  
+✅ Store secrets in `.env`  
 ✅ Never commit API keys  
 ✅ Configure CORS properly  
 ✅ Use HTTPS in production  
