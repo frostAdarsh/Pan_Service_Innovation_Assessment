@@ -97,10 +97,7 @@ VITE_API_URL=http://localhost:8000
 # Clerk Authentication
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 
-# =========================
-# Backend CORS Settings
-# =========================
-BACKEND_CORS_ORIGINS=["http://localhost:5173"]
+
 ```
 
 ---
