@@ -7,31 +7,37 @@ from unittest.mock import AsyncMock, MagicMock
 
 @pytest.fixture
 def mock_db():
-    mock = AsyncMock()
+    
+    mock = MagicMock()
     
    
+    mock_docs = AsyncMock()
+    
+  
     insert_result = MagicMock()
     insert_result.inserted_id = "507f1f77bcf86cd799439011"
-    mock.documents.insert_one = AsyncMock(return_value=insert_result)
+    mock_docs.insert_one.return_value = insert_result
     
-   
-    mock.documents.find_one = AsyncMock(return_value={
+    
+    mock_docs.find_one.return_value = {
         "_id": "507f1f77bcf86cd799439011",
         "content": "This is mock document content."
-    })
+    }
     
-    
-    cursor_mock = AsyncMock()
-    cursor_mock.to_list = AsyncMock(return_value=[{"_id": "507f1f77bcf86cd799439011", "filename": "test.pdf"}])
-    sort_mock = MagicMock()
-    sort_mock.sort.return_value = cursor_mock
-    mock.documents.find.return_value = sort_mock
+  
+    mock_cursor = AsyncMock()
+    mock_cursor.to_list.return_value = [{"_id": "507f1f77bcf86cd799439011", "filename": "test.pdf"}]
+    mock_sort = MagicMock()
+    mock_sort.sort.return_value = mock_cursor
+    mock_docs.find.return_value = mock_sort
     
    
     delete_result = MagicMock()
     delete_result.deleted_count = 1
-    mock.documents.delete_one = AsyncMock(return_value=delete_result)
+    mock_docs.delete_one.return_value = delete_result
     
+   
+    mock.documents = mock_docs
     return mock
 
 
