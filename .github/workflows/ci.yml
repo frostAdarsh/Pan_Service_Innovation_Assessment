@@ -30,8 +30,9 @@ jobs:
 
       - name: Run Pytest with 95% Coverage
         working-directory: ./backend
-       
+        
         env:
+          PYTHONPATH: .               
           ENVIRONMENT: testing
           MONGO_URI: mongomock://localhost
           DB_NAME: test_db
@@ -50,10 +51,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 18
+      - name: Set up Node.js 20      
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20"         
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
