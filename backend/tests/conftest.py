@@ -1,9 +1,9 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 from app.main import app
-from app.core.database import get_db
+from unittest.mock import patch
 
-# --- THE BULLETPROOF FAKE DATABASE ---
+# --- THE ASYNC FAKE DATABASE ---
 class FakeCollection:
     def __init__(self):
         self.find_one_result = {"_id": "507f1f77bcf86cd799439011", "content": "This is mock document content."}
@@ -26,7 +26,6 @@ class FakeCollection:
         class FakeSortedCursor:
             async def to_list(self, length=100):
                 return [{"_id": "507f1f77bcf86cd799439011", "filename": "test.pdf"}]
-        
         class FakeCursor:
             def sort(self, *args, **kwargs):
                 return FakeSortedCursor()
@@ -39,16 +38,13 @@ class FakeDB:
 # --- FIXTURES ---
 @pytest.fixture
 def mock_db():
-    return FakeDB()
+    fake_db = FakeDB()
+    # THIS FORCE-PATCHES THE DB INSIDE UPLOAD.PY
+    with patch("app.routes.upload.get_db", return_value=fake_db):
+        yield fake_db
 
 @pytest.fixture
-def override_get_db(mock_db):
-    app.dependency_overrides[get_db] = lambda: mock_db
-    yield
-    app.dependency_overrides.clear()
-
-@pytest.fixture
-async def async_client(override_get_db):
+async def async_client(mock_db):
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         yield client

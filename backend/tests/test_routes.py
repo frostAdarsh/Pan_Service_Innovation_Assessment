@@ -3,7 +3,6 @@ from httpx import AsyncClient
 from unittest.mock import patch, MagicMock
 import io
 from app.main import app
-from app.core.database import get_db
 
 @pytest.mark.asyncio
 @patch("app.routes.upload.transcribe_audio_video")
@@ -62,15 +61,14 @@ async def test_upload_unsupported_file(async_client: AsyncClient):
     response = await async_client.post("/api/v1/upload/", files=files, data=data)
     assert response.status_code == 400
 
+# PATCH get_db explicitly to return None to test the 500 error
 @pytest.mark.asyncio
-async def test_upload_db_disconnected(async_client: AsyncClient):
-    app.dependency_overrides[get_db] = lambda: None
+@patch("app.routes.upload.get_db", return_value=None)
+async def test_upload_db_disconnected(mock_get_db, async_client: AsyncClient):
     files = {"file": ("test.mp3", io.BytesIO(b"fake"), "audio/mpeg")}
     data = {"user_id": "test_user_123"}
-    
     response = await async_client.post("/api/v1/upload/", files=files, data=data)
     assert response.status_code == 500
-    app.dependency_overrides.clear()
 
 @pytest.mark.asyncio
 @patch("app.routes.upload.answer_document_question")
@@ -82,9 +80,7 @@ async def test_chat_with_document(mock_answer, async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_chat_document_not_found(async_client: AsyncClient, mock_db):
-   
     mock_db.documents.find_one_result = None
-    
     payload = {"document_id": "507f1f77bcf86cd799439011", "question": "What is this?"}
     response = await async_client.post("/api/v1/chat/", json=payload)
     assert response.status_code == 404
@@ -101,8 +97,6 @@ async def test_delete_document(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_delete_document_not_found(async_client: AsyncClient, mock_db):
-   
     mock_db.documents.delete_count = 0
-    
     response = await async_client.delete("/api/v1/documents/507f1f77bcf86cd799439011")
     assert response.status_code == 404
