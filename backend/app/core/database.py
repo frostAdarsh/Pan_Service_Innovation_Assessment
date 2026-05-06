@@ -17,7 +17,7 @@ async def connect_to_mongo():
         logging.error("MONGO_URI environment variable not set!")
         return
 
-    # Initialize the async MongoDB client
+   
     db_instance.client = AsyncIOMotorClient(mongo_uri)
     db_instance.db = db_instance.client[db_name]
     logging.info("Successfully connected to MongoDB!")

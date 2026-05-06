@@ -52,7 +52,7 @@ export default function MediaChat({ document, fileUrl }) {
   return (
     <div className="mt-8 flex flex-col lg:flex-row gap-6 h-[600px]">
       
-      {/* Left Column: Media Player OR Document Key Points */}
+     
       <div className="w-full lg:w-1/2 flex flex-col bg-white border rounded-xl p-4 shadow-sm overflow-y-auto">
         <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
           {document.file_type === 'media' 
@@ -70,21 +70,21 @@ export default function MediaChat({ document, fileUrl }) {
             Your browser does not support the video tag.
           </video>
         ) : (
-          /* --- UPDATED PDF VIEWER AREA --- */
+         
           <div className="w-full flex-1 bg-blue-50/50 rounded-lg p-6 mb-4 border border-blue-100 overflow-y-auto">
             <div className="flex items-center gap-3 mb-4 border-b border-blue-200 pb-3">
               <FileText className="w-6 h-6 text-blue-600" />
               <h3 className="font-bold text-gray-800 text-lg">📄 Key Document Points</h3>
             </div>
             
-            {/* Render the Key Points right inside the left panel */}
+            
             <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
               {document.summary}
             </p>
           </div>
         )}
 
-        {/* Timestamps (Only renders if they exist, which they won't for PDFs) */}
+       
         {document.timestamps && document.timestamps.length > 0 && (
           <div className="mt-2">
             <h4 className="font-semibold text-gray-700 flex items-center gap-2 mb-3">
@@ -105,7 +105,7 @@ export default function MediaChat({ document, fileUrl }) {
         )}
       </div>
 
-      {/* Right Column: Chat Interface */}
+     
       <div className="w-full lg:w-1/2 flex flex-col bg-white border rounded-xl shadow-sm overflow-hidden">
         <div className="bg-gray-50 border-b px-4 py-3 flex items-center gap-2">
           <MessageSquare className="w-5 h-5 text-green-600" />

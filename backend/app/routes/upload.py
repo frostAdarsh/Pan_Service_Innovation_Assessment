@@ -39,7 +39,17 @@ async def upload_document(file: UploadFile = File(...), user_id: str = Form(...)
     try:
         if file.filename.lower().endswith(('.mp3', '.mp4', '.wav', '.mpeg')):
             file_type = "media"
-            content = await transcribe_audio_video(file_location)
+            
+            # --- THIS IS THE CRITICAL FIX ---
+            try:
+                content = await transcribe_audio_video(file_location)
+            except Exception as e:
+                # Catch the specific Groq "no audio" error so the server doesn't crash!
+                if "no audio track" in str(e).lower() or "badrequest" in str(e).lower():
+                    raise HTTPException(status_code=400, detail="No audio track found. Please upload a file that actually contains sound.")
+                raise HTTPException(status_code=500, detail=f"Transcription failed: {str(e)}")
+            # --------------------------------
+                
         elif file.filename.lower().endswith('.pdf'):
             file_type = "pdf"
             content = extract_pdf_text(file_location)

@@ -26,7 +26,12 @@ export default function FileUpload({ onUploadSuccess }) {
       onUploadSuccess(response.data, fileUrl);
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Failed to upload file. Make sure your backend is running!");
+      
+      if (error.response && error.response.data && error.response.data.detail) {
+        alert(error.response.data.detail);
+      } else {
+        alert("Failed to upload file. Make sure your backend is running!");
+      }
     } finally {
       setLoading(false);
     }

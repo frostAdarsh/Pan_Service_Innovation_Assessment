@@ -34,7 +34,7 @@ export default function Home() {
           
           {currentDocument.file_type === 'media' && (
             <div className="mb-6 p-4 bg-gray-100 rounded-lg border">
-              <h3 className="font-semibold text-gray-700 mb-2">🎬 AI Summary:</h3>
+              <h3 className="font-semibold text-gray-700 mb-2"> AI Summary:</h3>
               <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
                 {currentDocument.summary}
               </p>
