@@ -3,6 +3,7 @@ from httpx import AsyncClient
 from unittest.mock import patch, MagicMock
 import io
 from app.main import app
+from app.core.database import get_db
 
 @pytest.mark.asyncio
 @patch("app.routes.upload.transcribe_audio_video")
@@ -61,7 +62,6 @@ async def test_upload_unsupported_file(async_client: AsyncClient):
     response = await async_client.post("/api/v1/upload/", files=files, data=data)
     assert response.status_code == 400
 
-# PATCH get_db explicitly to return None to test the 500 error
 @pytest.mark.asyncio
 @patch("app.routes.upload.get_db", return_value=None)
 async def test_upload_db_disconnected(mock_get_db, async_client: AsyncClient):
@@ -100,3 +100,20 @@ async def test_delete_document_not_found(async_client: AsyncClient, mock_db):
     mock_db.documents.delete_count = 0
     response = await async_client.delete("/api/v1/documents/507f1f77bcf86cd799439011")
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+@patch("app.routes.upload.transcribe_audio_video")
+async def test_upload_transcription_generic_error(mock_transcribe, async_client: AsyncClient):
+  
+    mock_transcribe.side_effect = Exception("Groq API is completely down")
+
+    file_content = b"fake mp3 content"
+    files = {"file": ("test.mp3", io.BytesIO(file_content), "audio/mpeg")}
+    data = {"user_id": "test_user_123"}
+
+    response = await async_client.post("/api/v1/upload/", files=files, data=data)
+    
+  
+    assert response.status_code == 500
+    assert "Transcription failed" in response.json()["detail"]
