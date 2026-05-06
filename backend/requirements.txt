@@ -1,0 +1,18 @@
+# Web Framework & Server
+fastapi==0.104.1
+uvicorn==0.24.0.post1
+python-multipart==0.0.6
+
+# Database & Environment
+motor>=3.4.0
+pymongo>=4.4.0
+python-dotenv==1.0.0
+
+# AI APIs
+groq==0.4.2
+
+# Testing (for your 95% coverage requirement)
+pytest==7.4.3
+pytest-cov==4.1.0
+httpx==0.25.1
+pytest-asyncio==0.21.1
