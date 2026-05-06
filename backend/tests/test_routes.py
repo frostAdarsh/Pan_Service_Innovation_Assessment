@@ -23,7 +23,6 @@ async def test_upload_document_media(mock_gen_summary, mock_transcribe, async_cl
 @patch("app.routes.upload.PyPDF2.PdfReader")
 @patch("app.routes.upload.generate_summary_and_timestamps")
 async def test_upload_document_pdf(mock_gen_summary, mock_pdf_reader, async_client: AsyncClient):
-    
     mock_page = MagicMock()
     mock_page.extract_text.return_value = "Extracted PDF text"
     
@@ -42,7 +41,6 @@ async def test_upload_document_pdf(mock_gen_summary, mock_pdf_reader, async_clie
 @pytest.mark.asyncio
 @patch("app.routes.upload.PyPDF2.PdfReader")
 async def test_upload_pdf_encrypted_or_empty(mock_pdf_reader, async_client: AsyncClient):
-    
     mock_reader_instance = MagicMock()
     mock_reader_instance.is_encrypted = True
     mock_pdf_reader.return_value = mock_reader_instance
@@ -52,7 +50,6 @@ async def test_upload_pdf_encrypted_or_empty(mock_pdf_reader, async_client: Asyn
     res1 = await async_client.post("/api/v1/upload/", files=files, data=data)
     assert res1.status_code == 422
 
-   
     mock_reader_instance.is_encrypted = False
     mock_reader_instance.pages = [] 
     res2 = await async_client.post("/api/v1/upload/", files=files, data=data)
@@ -85,7 +82,9 @@ async def test_chat_with_document(mock_answer, async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_chat_document_not_found(async_client: AsyncClient, mock_db):
-    mock_db.documents.find_one.return_value = None
+   
+    mock_db.documents.find_one_result = None
+    
     payload = {"document_id": "507f1f77bcf86cd799439011", "question": "What is this?"}
     response = await async_client.post("/api/v1/chat/", json=payload)
     assert response.status_code == 404
@@ -102,6 +101,8 @@ async def test_delete_document(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_delete_document_not_found(async_client: AsyncClient, mock_db):
-    mock_db.documents.delete_one.return_value.deleted_count = 0
+   
+    mock_db.documents.delete_count = 0
+    
     response = await async_client.delete("/api/v1/documents/507f1f77bcf86cd799439011")
     assert response.status_code == 404

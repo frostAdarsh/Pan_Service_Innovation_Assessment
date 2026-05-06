@@ -2,40 +2,44 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 from app.main import app
 from app.core.database import get_db
-from unittest.mock import AsyncMock, MagicMock
 
+# --- THE BULLETPROOF FAKE DATABASE ---
+class FakeCollection:
+    def __init__(self):
+        self.find_one_result = {"_id": "507f1f77bcf86cd799439011", "content": "This is mock document content."}
+        self.delete_count = 1
+
+    async def insert_one(self, *args, **kwargs):
+        class MockResult:
+            inserted_id = "507f1f77bcf86cd799439011"
+        return MockResult()
+
+    async def find_one(self, *args, **kwargs):
+        return self.find_one_result
+
+    async def delete_one(self, *args, **kwargs):
+        class MockResult:
+            deleted_count = self.delete_count
+        return MockResult()
+
+    def find(self, *args, **kwargs):
+        class FakeSortedCursor:
+            async def to_list(self, length=100):
+                return [{"_id": "507f1f77bcf86cd799439011", "filename": "test.pdf"}]
+        
+        class FakeCursor:
+            def sort(self, *args, **kwargs):
+                return FakeSortedCursor()
+        return FakeCursor()
+
+class FakeDB:
+    def __init__(self):
+        self.documents = FakeCollection()
+
+# --- FIXTURES ---
 @pytest.fixture
 def mock_db():
-    mock = MagicMock()
-    mock_docs = MagicMock()
-    
-  
-    mock_docs.insert_one = AsyncMock()
-    mock_docs.insert_one.return_value.inserted_id = "507f1f77bcf86cd799439011"
-    
-
-    mock_docs.find_one = AsyncMock()
-    mock_docs.find_one.return_value = {
-        "_id": "507f1f77bcf86cd799439011",
-        "content": "This is mock document content."
-    }
-    
-    
-    mock_cursor = MagicMock()
-    mock_cursor.to_list = AsyncMock()
-    mock_cursor.to_list.return_value = [{"_id": "507f1f77bcf86cd799439011", "filename": "test.pdf"}]
-    
-    mock_sort = MagicMock()
-    mock_sort.sort = MagicMock(return_value=mock_cursor)
-    mock_docs.find = MagicMock(return_value=mock_sort)
-    
-    
-    mock_docs.delete_one = AsyncMock()
-    mock_docs.delete_one.return_value.deleted_count = 1
-    
-   
-    mock.documents = mock_docs
-    return mock
+    return FakeDB()
 
 @pytest.fixture
 def override_get_db(mock_db):
